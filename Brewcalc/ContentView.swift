@@ -49,14 +49,14 @@ struct ContentView: View {
         
         return VStack {
             Text("Coffee: \(coffeeAmount)")
-            Slider(value: coffeeBinding, in: 0...100, step: 1)
+            Slider(value: coffeeBinding, in: 1...100, step: 1)
             
             Text("Water ratio: \(waterRatio)")
-            Slider(value: ratioBinding, in: 0...30, step: 1)
+            Slider(value: ratioBinding, in: 1...30, step: 1)
             
             Text("Water: \(waterAmount)")
-            Slider(value: waterBinding, in: 0...1000, step: 1)
-        }
+            Slider(value: waterBinding, in: 1...1000, step: 1)
+        }.padding()
     }
 }
 
