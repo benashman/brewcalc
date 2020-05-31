@@ -17,9 +17,7 @@ struct ContentView: View {
     var body: some View {
         
         let ratioBinding = Binding(
-            get: {
-                self.waterRatio
-            },
+            get: { self.waterRatio },
             set: {
                 self.waterRatio = $0
                 self.waterAmount = $0 * self.coffeeAmount
@@ -27,9 +25,7 @@ struct ContentView: View {
         )
         
         let coffeeBinding = Binding(
-            get: {
-                self.coffeeAmount
-            },
+            get: { self.coffeeAmount },
             set: {
                 self.coffeeAmount = $0
                 self.waterAmount = $0 * self.waterRatio
@@ -37,10 +33,7 @@ struct ContentView: View {
         )
         
         let waterBinding = Binding(
-            get: {
-                self.waterAmount
-                
-            },
+            get: { self.waterAmount },
             set: {
                 self.waterAmount = $0
                 self.coffeeAmount = $0 / self.waterRatio
@@ -48,13 +41,16 @@ struct ContentView: View {
         )
         
         return VStack {
-            Text("Coffee: \(coffeeAmount)")
+            Text("Coffee amount")
+            Text(" \(Int(coffeeAmount))g")
             Slider(value: coffeeBinding, in: 1...100, step: 1)
             
-            Text("Water ratio: \(waterRatio)")
+            Text("Water ratio")
+            Text(" 1:\(Int(waterRatio))")
             Slider(value: ratioBinding, in: 1...30, step: 1)
             
-            Text("Water: \(waterAmount)")
+            Text("Water amount")
+            Text(" \(Int(waterAmount))g")
             Slider(value: waterBinding, in: 1...1000, step: 1)
         }.padding()
     }
