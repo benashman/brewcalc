@@ -50,17 +50,23 @@ struct ContentView: View {
             }
         )
         
-        return VStack {
-            Text("Coffee amount")
-            Text(" \(Int(coffeeAmount))g")
+        return VStack(alignment: .leading) {
+            Text("Coffee")
+                .font(.system(.callout, design: .monospaced))
+            Text("\(Int(coffeeAmount))g")
+                .font(.system(.largeTitle, design: .monospaced))
             Slider(value: coffeeBinding, in: 1...100, step: 1)
             
-            Text("Water ratio")
-            Text(" 1:\(Int(waterRatio))")
+            Text("Ratio")
+                .font(.system(.callout, design: .monospaced))
+            Text("1:\(Int(waterRatio))")
+                .font(.system(.largeTitle, design: .monospaced))
             Slider(value: ratioBinding, in: 1...30, step: 1)
             
-            Text("Water amount")
-            Text(" \(Int(waterAmount))g")
+            Text("Water")
+                .font(.system(.callout, design: .monospaced))
+            Text("\(Int(waterAmount))g")
+                .font(.system(.largeTitle, design: .monospaced))
             Slider(value: waterBinding, in: 1...1000, step: 1)
         }.padding()
     }
