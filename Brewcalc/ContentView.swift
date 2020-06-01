@@ -7,36 +7,46 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct ContentView: View {
 
-    @State var coffeeAmount: Double = 25
-    @State var waterAmount: Double = 25
-    @State var waterRatio: Double = 16
+    @State var coffeeAmount: Double = UserDefaults.standard.double(forKey: "coffeeAmount")
+    @State var waterAmount: Double = UserDefaults.standard.double(forKey: "waterAmount")
+    @State var waterRatio: Double = UserDefaults.standard.double(forKey: "waterRatio")
     
     var body: some View {
         
         let ratioBinding = Binding(
-            get: { self.waterRatio },
+            get: { UserDefaults.standard.double(forKey: "waterRatio") },
             set: {
                 self.waterRatio = $0
+                UserDefaults.standard.set(self.waterRatio, forKey: "waterRatio")
+                
                 self.waterAmount = $0 * self.coffeeAmount
+                UserDefaults.standard.set(self.waterAmount, forKey: "waterAmount")
             }
         )
         
         let coffeeBinding = Binding(
-            get: { self.coffeeAmount },
+            get: { UserDefaults.standard.double(forKey: "coffeeAmount") },
             set: {
                 self.coffeeAmount = $0
+                UserDefaults.standard.set(self.coffeeAmount, forKey: "coffeeAmount")
+                
                 self.waterAmount = $0 * self.waterRatio
+                UserDefaults.standard.set(self.waterAmount, forKey: "waterAmount")
             }
         )
         
         let waterBinding = Binding(
-            get: { self.waterAmount },
+            get: { UserDefaults.standard.double(forKey: "waterAmount") },
             set: {
                 self.waterAmount = $0
+                UserDefaults.standard.set(self.waterAmount, forKey: "waterAmount")
+                
                 self.coffeeAmount = $0 / self.waterRatio
+                UserDefaults.standard.set(self.coffeeAmount, forKey: "coffeeAmount")
             }
         )
         
