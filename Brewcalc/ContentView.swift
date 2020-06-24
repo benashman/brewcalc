@@ -31,7 +31,7 @@ struct ContentView: View {
                 
                 
                 withAnimation(.spring()) {
-                    if gesture.translation.width > -20 && gesture.translation.width < 20 {
+                    if gesture.translation.width > -16 && gesture.translation.width < 16 {
                         self.offset = gesture.translation
                     }
                 }
@@ -40,7 +40,7 @@ struct ContentView: View {
                 // https://gist.github.com/assassinave/23e939608622e8b288a29ace37be3091
                 var modulatedValue = 0 + ((gesture.translation.width - 0) / (375 - 0)) * (100 - 0)
                 
-                var newValue = Double(startValue + (Double(modulatedValue) / 200))
+                var newValue = Double(startValue + (Double(modulatedValue) / 300))
                 
                 if newValue > rangeMax {
                     newValue = rangeMax
