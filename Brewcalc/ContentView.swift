@@ -178,29 +178,32 @@ struct Nudger<Content: View>: View {
     @State var dragOffset = CGSize.zero
     @State var isDragging = false
     
-    let content: () -> Content
+    let generator = UINotificationFeedbackGenerator()
     
+    let content: () -> Content
 
     var body: some View {
         content()
             .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-            .offset(x: self.dragOffset.width, y: 0)
             .gesture(
                 DragGesture()
                     .onChanged({ gesture in
                         self.isDragging = true
                         
                         let step: Double = 1
-                        let startValue = self.value
                         let tx = gesture.translation.width
                         let screenWidth = UIScreen.main.bounds.size.width
                         
                         let minValue = Double(range.lowerBound)
                         let maxValue = Double(range.upperBound)
                         
-                        let modulatedValue = minValue + Double((tx / screenWidth)) * (maxValue - minValue)
+//                        let modulatedValue = minValue + Double((tx / screenWidth)) * (maxValue - minValue)
+                         
+                        // tx/20 = approx. 10 units in each direction
+                        var newValue = Double(round(tx)) + self.value
+//                        print(newValue)
                         
-                        var newValue = Double(startValue + modulatedValue / 5)
+//                        print(self.value + Double(tx/10))
                         
                         // Ensure value stays within range
                         if newValue > maxValue {
@@ -211,10 +214,18 @@ struct Nudger<Content: View>: View {
                             newValue = minValue
                         }
                         
-                        let roundedValue = round(newValue / step) * step
+//                        print(newValue)
                         
-                        self.value = roundedValue
+//                        let roundedValue = round(newValue / step) * step
                         
+//                        print(roundedValue)
+                        
+//                        print(round(newValue))
+//                        self.value = round(newValue)
+                        
+//                        let selectionFeedback = UISelectionFeedbackGenerator()
+//                        selectionFeedback.selectionChanged()
+//
                         withAnimation(.spring()) {
                             if tx > -16 && gesture.translation.width < 16 {
                                 self.dragOffset = gesture.translation
@@ -223,8 +234,12 @@ struct Nudger<Content: View>: View {
                     })
                     .onEnded({ _ in
                         self.isDragging = false
-                        self.dragOffset = .zero
+                        
+                        withAnimation(.spring()) {
+                            self.dragOffset = .zero
+                        }
                     })
             )
+            .offset(x: self.dragOffset.width, y: 0)
     }
 }
