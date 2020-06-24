@@ -106,6 +106,10 @@ struct ContentView: View {
         
         return VStack( alignment: .center, spacing: 64) {
             
+            Nudger(value: coffeeBinding, range: 1...100, text: "\(Int(coffeeAmount))g")
+            Nudger(value: ratioBinding, range: 1...30, text: "\(Int(waterRatio))g")
+            Nudger(value: waterBinding, range: 1...1000, text: "\(Int(waterAmount))g")
+            
             VStack(spacing: 0) {
                 Text("Coffee")
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
@@ -150,5 +154,46 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+struct Nudger: View {
+    @Binding var value: Double
+    
+    @State var isDragging = false
+    @State var range: ClosedRange<CGFloat>
+    @State var text: String
+    
+    var body: some View {
+        Text("\(self.value)")
+            .gesture(
+                DragGesture()
+                    .onChanged({ gesture in
+                        
+                        self.isDragging = true
+                        
+                        var startValue = self.value
+                        var tx = gesture.translation.width
+                        let screenWidth = UIScreen.main.bounds.size.width
+                        
+                        let minValue = Double(range.lowerBound)
+                        let maxValue = Double(range.upperBound)
+                        
+                        var modulatedValue = minValue + Double((tx / screenWidth)) * (maxValue - minValue)
+                        
+                        var newValue = Double(startValue + modulatedValue)
+                        
+                        // Ensure value stays within range
+                        if newValue > maxValue {
+                            newValue = maxValue
+                        }
+                        
+                        if newValue < minValue {
+                            newValue = minValue
+                        }
+                        
+                        self.value = newValue
+                    })
+            )
     }
 }
