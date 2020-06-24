@@ -106,20 +106,24 @@ struct ContentView: View {
         
         return VStack( alignment: .center, spacing: 64) {
             
-            Nudger(value: coffeeBinding, range: 1...100, text: "\(Int(coffeeAmount))g")
-            Nudger(value: ratioBinding, range: 1...30, text: "\(Int(waterRatio))g")
-            Nudger(value: waterBinding, range: 1...1000, text: "\(Int(waterAmount))g")
+//            Nudger(value: ratioBinding, range: 1...30, text: "1:\(Int(waterRatio))")
+//            Nudger(value: waterBinding, range: 1...1000, text: "\(Int(waterAmount))g")
             
             VStack(spacing: 0) {
                 Text("Coffee")
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
                     .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-
-                Text("\(Int(coffeeAmount))g")
-                    .font(.system(size: 56, weight: .regular, design: .monospaced))
-                    .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-                    .offset(x: offset.width, y: 0)
-                    .gesture(drag)
+                
+                Nudger(value: coffeeBinding, range: 1...100) {
+                    Text("\(Int(coffeeAmount))g")
+                        .font(.system(size: 56, weight: .regular, design: .monospaced))
+                }
+                
+//                Text("\(Int(coffeeAmount))g")
+//                    .font(.system(size: 56, weight: .regular, design: .monospaced))
+//                    .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
+//                    .offset(x: offset.width, y: 0)
+//                    .gesture(drag)
                 
     //            Slider(value: coffeeBinding, in: 1...100, step: 1)
             }
@@ -127,10 +131,15 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 Text("Ratio")
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
+                
+                Nudger(value: ratioBinding, range: 1...30) {
+                    Text("1:\(Int(waterRatio))")
+                        .font(.system(size: 56, weight: .regular, design: .monospaced))
+                }
     //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
                 
-                Text("1:\(Int(waterRatio))")
-                    .font(.system(size: 56, weight: .regular, design: .monospaced))
+//                Text("1:\(Int(waterRatio))")
+//                    .font(.system(size: 56, weight: .regular, design: .monospaced))
     //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
                 
     //            Slider(value: ratioBinding, in: 1...30, step: 1)
@@ -141,8 +150,12 @@ struct ContentView: View {
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
     //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
                 
-                Text("\(Int(waterAmount))g")
-                    .font(.system(size: 56, weight: .regular, design: .monospaced))
+                Nudger(value: waterBinding, range: 1...1000) {
+                    Text("\(Int(waterAmount))g")
+                        .font(.system(size: 56, weight: .regular, design: .monospaced))
+                }
+//                Text("\(Int(waterAmount))g")
+//                    .font(.system(size: 56, weight: .regular, design: .monospaced))
     //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
                 
     //            Slider(value: waterBinding, in: 1...1000, step: 1)
@@ -157,31 +170,37 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-struct Nudger: View {
+struct Nudger<Content: View>: View {
     @Binding var value: Double
     
-    @State var isDragging = false
     @State var range: ClosedRange<CGFloat>
-    @State var text: String
     
+    @State var dragOffset = CGSize.zero
+    @State var isDragging = false
+    
+    let content: () -> Content
+    
+
     var body: some View {
-        Text("\(self.value)")
+        content()
+            .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
+            .offset(x: self.dragOffset.width, y: 0)
             .gesture(
                 DragGesture()
                     .onChanged({ gesture in
-                        
                         self.isDragging = true
                         
-                        var startValue = self.value
-                        var tx = gesture.translation.width
+                        let step: Double = 1
+                        let startValue = self.value
+                        let tx = gesture.translation.width
                         let screenWidth = UIScreen.main.bounds.size.width
                         
                         let minValue = Double(range.lowerBound)
                         let maxValue = Double(range.upperBound)
                         
-                        var modulatedValue = minValue + Double((tx / screenWidth)) * (maxValue - minValue)
+                        let modulatedValue = minValue + Double((tx / screenWidth)) * (maxValue - minValue)
                         
-                        var newValue = Double(startValue + modulatedValue)
+                        var newValue = Double(startValue + modulatedValue / 5)
                         
                         // Ensure value stays within range
                         if newValue > maxValue {
@@ -192,7 +211,19 @@ struct Nudger: View {
                             newValue = minValue
                         }
                         
-                        self.value = newValue
+                        let roundedValue = round(newValue / step) * step
+                        
+                        self.value = roundedValue
+                        
+                        withAnimation(.spring()) {
+                            if tx > -16 && gesture.translation.width < 16 {
+                                self.dragOffset = gesture.translation
+                            }
+                        }
+                    })
+                    .onEnded({ _ in
+                        self.isDragging = false
+                        self.dragOffset = .zero
                     })
             )
     }
