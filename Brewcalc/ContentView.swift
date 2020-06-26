@@ -24,48 +24,11 @@ struct ContentView: View {
         DragGesture(minimumDistance: 0, coordinateSpace: .global)
             .onChanged { gesture in
                 self.isDragging = true
-                
-                let rangeMin = 0.0
-                let rangeMax = 100.0
-                let startValue = self.coffeeAmount
-                
-                
-                withAnimation(.spring()) {
-                    if gesture.translation.width > -16 && gesture.translation.width < 16 {
-                        self.offset = gesture.translation
-                    }
-                }
-                
-//                print(Int(gesture.translation.width))
-                // https://gist.github.com/assassinave/23e939608622e8b288a29ace37be3091
-                var modulatedValue = 0 + ((gesture.translation.width - 0) / (375 - 0)) * (100 - 0)
-                
-                var newValue = Double(startValue + (Double(modulatedValue) / 300))
-                
-                if newValue > rangeMax {
-                    newValue = rangeMax
-                }
-                
-                if newValue < rangeMin {
-                    newValue = rangeMin
-                }
-                
-                self.coffeeAmount = newValue
-                self.waterAmount = newValue * self.waterRatio
-                
-                print(newValue)
-                
-//                var translationValue = modulatedValue
-//                print(coffeeAmount + Double(modulatedValue))
-//                print(0 + ((gesture.translation.width - 0) / (375 - 0)) * (100 - 0))
+                print("WE ARE DRAGGING")
             }
             
             .onEnded { _ in
                 self.isDragging = false
-                
-                withAnimation(.spring()) {
-                    self.offset = .zero
-                }
             }
     }
     
@@ -106,59 +69,37 @@ struct ContentView: View {
         
         return VStack( alignment: .center, spacing: 64) {
             
-//            Nudger(value: ratioBinding, range: 1...30, text: "1:\(Int(waterRatio))")
-//            Nudger(value: waterBinding, range: 1...1000, text: "\(Int(waterAmount))g")
-            
-            VStack(spacing: 0) {
+            // Coffee amount
+            VStack(spacing: 4) {
                 Text("Coffee")
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
-                    .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
                 
                 Nudger(value: coffeeBinding, range: 1...100) {
                     Text("\(Int(coffeeAmount))g")
                         .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
-                
-//                Text("\(Int(coffeeAmount))g")
-//                    .font(.system(size: 56, weight: .regular, design: .monospaced))
-//                    .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-//                    .offset(x: offset.width, y: 0)
-//                    .gesture(drag)
-                
-    //            Slider(value: coffeeBinding, in: 1...100, step: 1)
             }
             
-            VStack(spacing: 0) {
-                Text("Ratio")
+            // Coffee:Water Ratio
+            VStack(spacing: 4) {
+                Text("Coffee:Water")
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
                 
                 Nudger(value: ratioBinding, range: 1...30) {
                     Text("1:\(Int(waterRatio))")
                         .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
-    //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-                
-//                Text("1:\(Int(waterRatio))")
-//                    .font(.system(size: 56, weight: .regular, design: .monospaced))
-    //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-                
-    //            Slider(value: ratioBinding, in: 1...30, step: 1)
             }
             
-            VStack(spacing: 0) {
+            // Water amount
+            VStack(spacing: 4) {
                 Text("Water")
                     .font(.system(size: 16, weight: .regular, design: .monospaced))
-    //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
                 
                 Nudger(value: waterBinding, range: 1...1000) {
                     Text("\(Int(waterAmount))g")
                         .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
-//                Text("\(Int(waterAmount))g")
-//                    .font(.system(size: 56, weight: .regular, design: .monospaced))
-    //                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-                
-    //            Slider(value: waterBinding, in: 1...1000, step: 1)
             }
         }.padding()
     }
@@ -172,6 +113,7 @@ struct ContentView_Previews: PreviewProvider {
 
 struct Nudger<Content: View>: View {
     @Binding var value: Double
+    @State var previousValue: Double = 0
     
     @State var range: ClosedRange<CGFloat>
     
@@ -186,46 +128,57 @@ struct Nudger<Content: View>: View {
         content()
             .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
             .gesture(
-                DragGesture()
+                DragGesture(minimumDistance: 8, coordinateSpace: .global)
                     .onChanged({ gesture in
                         self.isDragging = true
-                        
-                        let step: Double = 1
-                        let tx = gesture.translation.width
-                        let screenWidth = UIScreen.main.bounds.size.width
-                        
+                                                
+                        let tx = Double(gesture.translation.width)
                         let minValue = Double(range.lowerBound)
                         let maxValue = Double(range.upperBound)
                         
-//                        let modulatedValue = minValue + Double((tx / screenWidth)) * (maxValue - minValue)
-                         
-                        // tx/20 = approx. 10 units in each direction
-                        var newValue = Double(round(tx)) + self.value
-//                        print(newValue)
+                        var newValue = round(self.previousValue) + round(tx/20)
                         
-//                        print(self.value + Double(tx/10))
-                        
-                        // Ensure value stays within range
+                        // Ensure values stay within sensible ranges
                         if newValue > maxValue {
                             newValue = maxValue
                         }
-                        
+
                         if newValue < minValue {
                             newValue = minValue
                         }
                         
-//                        print(newValue)
+                        print("Previous Value: \(round(self.previousValue))")
+                        print("Translation dinstance: \(round(tx/20))")
                         
-//                        let roundedValue = round(newValue / step) * step
-                        
-//                        print(roundedValue)
-                        
-//                        print(round(newValue))
-//                        self.value = round(newValue)
-                        
-//                        let selectionFeedback = UISelectionFeedbackGenerator()
-//                        selectionFeedback.selectionChanged()
+                        self.value = newValue
 //
+//                        let screenWidth = UIScreen.main.bounds.size.width
+//
+//                        let minValue = Double(range.lowerBound)
+//                        let maxValue = Double(range.upperBound)
+//
+//                        let modulatedValue = minValue + Double((tx / (screenWidth*2))) * (maxValue - minValue)
+//
+//                        // tx/20 = approx. 10 units in each direction
+//                        if Int(tx).isMultiple(of: 10) {
+//                            var newValue = self.value + Double(tx)
+//                            print("VALUE CHANGED: \(newValue)")
+//                            self.value = newValue
+//                        }
+                        
+                        // Ensure value stays within provided range
+//                        if newValue > maxValue {
+//                            newValue = maxValue
+//                        }
+//s
+//                        if newValue < minValue {
+//                            newValue = minValue
+//                        }
+                        
+                        // Set new value
+//                        print(round(newValue))
+
+                        // Animate directionally while nudging
                         withAnimation(.spring()) {
                             if tx > -16 && gesture.translation.width < 16 {
                                 self.dragOffset = gesture.translation
@@ -235,6 +188,9 @@ struct Nudger<Content: View>: View {
                     .onEnded({ _ in
                         self.isDragging = false
                         
+                        self.previousValue = self.value
+                        
+                        // Return to default position
                         withAnimation(.spring()) {
                             self.dragOffset = .zero
                         }
