@@ -18,8 +18,6 @@ struct ContentView: View {
     @State var isDragging = false
     @State var offset = CGSize.zero
     
-    @State var coffeeGestureAmount: Double = UserDefaults.standard.double(forKey: "coffeeAmount")
-    
     var drag: some Gesture {
         DragGesture(minimumDistance: 0, coordinateSpace: .global)
             .onChanged { gesture in
@@ -105,22 +103,23 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
 struct Nudger<Content: View>: View {
-    @Binding var value: Double
-    @State var previousValue: Double = 0
+    @Binding var value: Double {
+        didSet {
+//            self.newValue = self.value
+            print("value didSet: \(newValue)")
+        }
+    }
+    
+    @State var currentValue: Double = 0
+    @State var newValue: Double = 0
+
     
     @State var range: ClosedRange<CGFloat>
     
     @State var dragOffset = CGSize.zero
-    @State var isDragging = false
     
-    let generator = UINotificationFeedbackGenerator()
+    @State var isDragging = false
     
     let content: () -> Content
 
@@ -136,51 +135,23 @@ struct Nudger<Content: View>: View {
                         let minValue = Double(range.lowerBound)
                         let maxValue = Double(range.upperBound)
                         
-                        var newValue = round(self.previousValue) + round(tx/20)
+                        currentValue = round(self.value) + round(tx/20)
                         
-                        // Ensure values stay within sensible ranges
-                        if newValue > maxValue {
-                            newValue = maxValue
+                        // Ensure the current value stays within defined range
+                        if currentValue > maxValue {
+                            currentValue = maxValue
                         }
 
-                        if newValue < minValue {
-                            newValue = minValue
+                        if currentValue < minValue {
+                            currentValue = minValue
                         }
                         
-                        print("Previous Value: \(round(self.previousValue))")
-                        print("Translation dinstance: \(round(tx/20))")
+                        // Refresh source of truth and update UI with current value
+                        self.value = self.currentValue
                         
-                        self.value = newValue
-//
-//                        let screenWidth = UIScreen.main.bounds.size.width
-//
-//                        let minValue = Double(range.lowerBound)
-//                        let maxValue = Double(range.upperBound)
-//
-//                        let modulatedValue = minValue + Double((tx / (screenWidth*2))) * (maxValue - minValue)
-//
-//                        // tx/20 = approx. 10 units in each direction
-//                        if Int(tx).isMultiple(of: 10) {
-//                            var newValue = self.value + Double(tx)
-//                            print("VALUE CHANGED: \(newValue)")
-//                            self.value = newValue
-//                        }
-                        
-                        // Ensure value stays within provided range
-//                        if newValue > maxValue {
-//                            newValue = maxValue
-//                        }
-//s
-//                        if newValue < minValue {
-//                            newValue = minValue
-//                        }
-                        
-                        // Set new value
-//                        print(round(newValue))
-
                         // Animate directionally while nudging
                         withAnimation(.spring()) {
-                            if tx > -16 && gesture.translation.width < 16 {
+                            if tx > -12 && gesture.translation.width < 12 {
                                 self.dragOffset = gesture.translation
                             }
                         }
@@ -188,14 +159,30 @@ struct Nudger<Content: View>: View {
                     .onEnded({ _ in
                         self.isDragging = false
                         
-                        self.previousValue = self.value
+                        self.newValue = self.value
                         
-                        // Return to default position
+                        // Animate return to default position
                         withAnimation(.spring()) {
                             self.dragOffset = .zero
                         }
                     })
             )
             .offset(x: self.dragOffset.width, y: 0)
+            .onAppear {
+                // Initially set previously stored value
+                self.newValue = self.value
+            }
+    }
+}
+
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ContentView()
+                .preferredColorScheme(.dark)
+            ContentView()
+                .preferredColorScheme(.light)
+        }
     }
 }
