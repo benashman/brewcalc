@@ -104,74 +104,32 @@ struct ContentView: View {
 }
 
 struct Nudger<Content: View>: View {
-    @Binding var value: Double {
-        didSet {
-//            self.newValue = self.value
-            print("value didSet: \(newValue)")
-        }
-    }
-    
-    @State var currentValue: Double = 0
-    @State var newValue: Double = 0
-
-    
+    @Binding var value: Double
     @State var range: ClosedRange<CGFloat>
     
-    @State var dragOffset = CGSize.zero
-    
     @State var isDragging = false
+    @GestureState var dragAmount = CGSize.zero
     
     let content: () -> Content
 
     var body: some View {
-        content()
-            .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
-            .gesture(
-                DragGesture(minimumDistance: 8, coordinateSpace: .global)
-                    .onChanged({ gesture in
-                        self.isDragging = true
-                                                
-                        let tx = Double(gesture.translation.width)
-                        let minValue = Double(range.lowerBound)
-                        let maxValue = Double(range.upperBound)
-                        
-                        currentValue = round(self.value) + round(tx/20)
-                        
-                        // Ensure the current value stays within defined range
-                        if currentValue > maxValue {
-                            currentValue = maxValue
-                        }
-
-                        if currentValue < minValue {
-                            currentValue = minValue
-                        }
-                        
-                        // Refresh source of truth and update UI with current value
-                        self.value = self.currentValue
-                        
-                        // Animate directionally while nudging
-                        withAnimation(.spring()) {
-                            if tx > -12 && gesture.translation.width < 12 {
-                                self.dragOffset = gesture.translation
+        Group {
+            Text("\(Int(self.value + Double((dragAmount.width))))")
+            content()
+                .foregroundColor(self.isDragging ? Color.yellow : Color.primary)
+                .offset(dragAmount)
+                .gesture(
+                    DragGesture()
+                        .updating($dragAmount) { v, state, transaction in
+                            withAnimation(.spring()) {
+                                state.width = v.translation.width/20
                             }
                         }
-                    })
-                    .onEnded({ _ in
-                        self.isDragging = false
-                        
-                        self.newValue = self.value
-                        
-                        // Animate return to default position
-                        withAnimation(.spring()) {
-                            self.dragOffset = .zero
-                        }
-                    })
-            )
-            .offset(x: self.dragOffset.width, y: 0)
-            .onAppear {
-                // Initially set previously stored value
-                self.newValue = self.value
-            }
+                        .onChanged({ (v) in
+                            self.value += round(Double(dragAmount.width/20))
+                        })
+                )
+        }
     }
 }
 
