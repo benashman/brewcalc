@@ -9,16 +9,16 @@
 import SwiftUI
 import Foundation
 
-struct DefaultValues {
-    static let coffee = 21
-    static let ratio = 16
-    static let water = 336
-}
-
 enum Components {
     static let coffee = "coffee"
     static let ratio = "ratio"
     static let water = "water"
+}
+
+struct DefaultValues {
+    static let coffee = 21
+    static let ratio = 16
+    static let water = 336
 }
 
 struct ContentView: View {
@@ -63,29 +63,23 @@ struct ContentView: View {
         
         return VStack(alignment: .center, spacing: 64) {
             VStack(spacing: 4) {
-                Text("Coffee")
-                    .font(.system(size: 16, weight: .regular, design: .monospaced))
+                ComponentTitle(title: "Coffee")
                 Nudger(value: coffeeBinding, range: 1...100) {
-                    Text("\(self.coffee)g")
-                        .font(.system(size: 56, weight: .regular, design: .monospaced))
+                    ComponentLabel(label: "\(self.coffee)g")
                 }
             }
 
             VStack(spacing: 4) {
-                Text("Ratio")
-                    .font(.system(size: 16, weight: .regular, design: .monospaced))
+                ComponentTitle(title: "Ratio")
                 Nudger(value: ratioBinding, range: 1...50) {
-                    Text("1:\(self.ratio)")
-                        .font(.system(size: 56, weight: .regular, design: .monospaced))
+                    ComponentLabel(label: "1:\(self.ratio)")
                 }
             }
 
             VStack(spacing: 4) {
-                Text("Water")
-                    .font(.system(size: 16, weight: .regular, design: .monospaced))
+                ComponentTitle(title: "Water")
                 Nudger(value: waterBinding, range: 1...5000) {
-                    Text("\(self.water)g")
-                        .font(.system(size: 56, weight: .regular, design: .monospaced))
+                    ComponentLabel(label: "\(self.water)g")
                 }
             }
         }
