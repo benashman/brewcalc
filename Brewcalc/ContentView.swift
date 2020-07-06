@@ -105,8 +105,6 @@ struct Nudger<Content: View>: View {
                             self.currentValue = self.value
                         }
                         
-                        dragValue.width = v.translation.width
-                        
                         var newValue = currentValue + Int(v.translation.width/20)
                         
                         // Ensure values stay within sensible ranges
@@ -120,11 +118,22 @@ struct Nudger<Content: View>: View {
                         
                         // Update state
                         self.value = newValue
+                        
+                        withAnimation(.spring()) {
+                            if v.translation.width > -12 && v.translation.width < 12 {
+                                dragValue = v.translation
+                            }
+                        }
                     }
                     .onEnded { _ in
                         currentValue = self.value
+                        
+                        withAnimation(.spring()) {
+                            dragValue = .zero
+                        }
                     }
             )
+            .offset(x: dragValue.width, y: 0)
             .onAppear {
                 self.currentValue = self.value
             }
