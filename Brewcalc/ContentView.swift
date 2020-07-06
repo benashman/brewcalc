@@ -99,11 +99,20 @@ struct Nudger<Content: View>: View {
                             self.currentValue = self.value
                         }
                         
-                        
                         dragValue.width = v.translation.width
                         
                         var newValue = currentValue + Int(v.translation.width/20)
                         
+                        // Ensure values stay within sensible ranges
+                        if newValue > range.upperBound {
+                            newValue = range.upperBound
+                        }
+                        
+                        if newValue < range.lowerBound {
+                            newValue = range.lowerBound
+                        }
+                        
+                        // Update state
                         self.value = newValue
                     }
                     .onEnded { _ in
@@ -111,15 +120,8 @@ struct Nudger<Content: View>: View {
                     }
             )
             .onAppear {
-                print("nudger onappear: \(self.value)")
                 self.currentValue = self.value
             }
-            .simultaneousGesture(
-                TapGesture()
-                    .onEnded {
-                        print("Tapped")
-                    }
-            )
     }
 }
 
