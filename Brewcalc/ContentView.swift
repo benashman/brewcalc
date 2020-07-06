@@ -27,6 +27,8 @@ struct ContentView: View {
             set: { val in
                 coffee = val
                 water = val * ratio
+                
+                print("coffee binding set")
             }
         )
         
@@ -35,6 +37,8 @@ struct ContentView: View {
             set: { val in
                 ratio = val
                 water = val * coffee
+                
+                print("ratio binding set")
             }
         )
         
@@ -43,27 +47,29 @@ struct ContentView: View {
             set: { val in
                 water = val
                 coffee = val / ratio
+                
+                print("water binding set")
             }
         )
         
         return VStack {
             HStack {
                 Text("Coffee")
-                Nudger(value: coffeeBinding) {
+                Nudger(value: coffeeBinding, range: 1...100) {
                     Text("\(self.coffee)g")
                 }
             }
 
             HStack {
                 Text("Ratio")
-                Nudger(value: ratioBinding) {
+                Nudger(value: ratioBinding, range: 1...50) {
                     Text("1:\(self.ratio)")
                 }
             }
 
             HStack {
                 Text("Water")
-                Nudger(value: waterBinding) {
+                Nudger(value: waterBinding, range: 1...1000) {
                     Text("\(self.water)g")
                 }
             }
@@ -73,7 +79,9 @@ struct ContentView: View {
 
 struct Nudger<Content: View>: View {
     @Binding var value: Int
-    @State var previousValue: Int = 0
+    let range: ClosedRange<Int>
+    
+    @State var currentValue: Int = 0
     
     @State var dragValue = CGSize.zero
     @State var isDragging = false
@@ -83,18 +91,35 @@ struct Nudger<Content: View>: View {
     var body: some View {
         content()
             .gesture(
-                DragGesture()
-                    .onChanged { v in
+                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                    .onChanged() { v in
+                        
+                        // Update internal value from state when gesture begins
+                        if v.translation.width == 0 {
+                            self.currentValue = self.value
+                        }
+                        
+                        
                         dragValue.width = v.translation.width
-                        self.value = previousValue + Int(v.translation.width/20)
+                        
+                        var newValue = currentValue + Int(v.translation.width/20)
+                        
+                        self.value = newValue
                     }
                     .onEnded { _ in
-                        previousValue = self.value
+                        currentValue = self.value
                     }
             )
             .onAppear {
-                self.previousValue = self.value
+                print("nudger onappear: \(self.value)")
+                self.currentValue = self.value
             }
+            .simultaneousGesture(
+                TapGesture()
+                    .onEnded {
+                        print("Tapped")
+                    }
+            )
     }
 }
 
