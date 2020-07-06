@@ -20,7 +20,7 @@ struct Nudger<Content: View>: View {
     
     let content: () -> Content
     
-    let generator = UISelectionFeedbackGenerator()
+    let feedbackGenerator = UISelectionFeedbackGenerator()
     
     var body: some View {
         content()
@@ -55,10 +55,11 @@ struct Nudger<Content: View>: View {
                             self.value = newValue
                             
                             // Provide haptic feedback
-                            generator.selectionChanged()
+                            feedbackGenerator.selectionChanged()
                         }
                         
                         self.previousValue = newValue
+
                         
                         withAnimation(.spring()) {
                             if v.translation.width > -12 && v.translation.width < 12 {
