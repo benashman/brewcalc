@@ -52,25 +52,31 @@ struct ContentView: View {
             }
         )
         
-        return VStack {
-            HStack {
+        return VStack(alignment: .center, spacing: 64) {
+            VStack(spacing: 4) {
                 Text("Coffee")
+                    .font(.system(size: 16, weight: .regular, design: .monospaced))
                 Nudger(value: coffeeBinding, range: 1...100) {
                     Text("\(self.coffee)g")
+                        .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
             }
 
-            HStack {
+            VStack(spacing: 4) {
                 Text("Ratio")
+                    .font(.system(size: 16, weight: .regular, design: .monospaced))
                 Nudger(value: ratioBinding, range: 1...50) {
                     Text("1:\(self.ratio)")
+                        .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
             }
 
-            HStack {
+            VStack(spacing: 4) {
                 Text("Water")
+                    .font(.system(size: 16, weight: .regular, design: .monospaced))
                 Nudger(value: waterBinding, range: 1...5000) {
                     Text("\(self.water)g")
+                        .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
             }
         }
