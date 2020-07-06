@@ -69,7 +69,7 @@ struct ContentView: View {
 
             HStack {
                 Text("Water")
-                Nudger(value: waterBinding, range: 1...1000) {
+                Nudger(value: waterBinding, range: 1...5000) {
                     Text("\(self.water)g")
                 }
             }
