@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA3446D124B3C21A00CA0580 /* Nudger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3446D024B3C21A00CA0580 /* Nudger.swift */; };
 		CA6C5EEE248336E4001A2F34 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6C5EED248336E4001A2F34 /* AppDelegate.swift */; };
 		CA6C5EF0248336E4001A2F34 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6C5EEF248336E4001A2F34 /* SceneDelegate.swift */; };
 		CA6C5EF2248336E4001A2F34 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6C5EF1248336E4001A2F34 /* ContentView.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA3446D024B3C21A00CA0580 /* Nudger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nudger.swift; sourceTree = "<group>"; };
 		CA6C5EEA248336E4001A2F34 /* Brewcalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Brewcalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA6C5EED248336E4001A2F34 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA6C5EEF248336E4001A2F34 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				CA6C5EED248336E4001A2F34 /* AppDelegate.swift */,
 				CA6C5EEF248336E4001A2F34 /* SceneDelegate.swift */,
 				CA6C5EF1248336E4001A2F34 /* ContentView.swift */,
+				CA3446D024B3C21A00CA0580 /* Nudger.swift */,
 				CA6C5EF3248336E5001A2F34 /* Assets.xcassets */,
 				CA6C5EF8248336E5001A2F34 /* LaunchScreen.storyboard */,
 				CA6C5EFB248336E5001A2F34 /* Info.plist */,
@@ -146,6 +149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA3446D124B3C21A00CA0580 /* Nudger.swift in Sources */,
 				CA6C5EEE248336E4001A2F34 /* AppDelegate.swift in Sources */,
 				CA6C5EF0248336E4001A2F34 /* SceneDelegate.swift in Sources */,
 				CA6C5EF2248336E4001A2F34 /* ContentView.swift in Sources */,

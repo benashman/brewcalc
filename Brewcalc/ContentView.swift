@@ -77,63 +77,6 @@ struct ContentView: View {
     }
 }
 
-struct Nudger<Content: View>: View {
-    @Binding var value: Int
-    let range: ClosedRange<Int>
-    
-    @State var currentValue: Int = 0
-    
-    @State var dragValue = CGSize.zero
-    @State var isDragging = false
-    
-    let content: () -> Content
-    
-    var body: some View {
-        content()
-            .gesture(
-                DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                    .onChanged() { v in
-                        
-                        // Update internal value from state when gesture begins
-                        if v.translation.width == 0 {
-                            self.currentValue = self.value
-                        }
-                        
-                        var newValue = currentValue + Int(v.translation.width/20)
-                        
-                        // Ensure values stay within sensible ranges
-                        if newValue > range.upperBound {
-                            newValue = range.upperBound
-                        }
-                        
-                        if newValue < range.lowerBound {
-                            newValue = range.lowerBound
-                        }
-                        
-                        // Update state
-                        self.value = newValue
-                        
-                        withAnimation(.spring()) {
-                            if v.translation.width > -12 && v.translation.width < 12 {
-                                dragValue = v.translation
-                            }
-                        }
-                    }
-                    .onEnded { _ in
-                        currentValue = self.value
-                        
-                        withAnimation(.spring()) {
-                            dragValue = .zero
-                        }
-                    }
-            )
-            .offset(x: dragValue.width, y: 0)
-            .onAppear {
-                self.currentValue = self.value
-            }
-    }
-}
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
