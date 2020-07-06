@@ -16,33 +16,42 @@ enum Components {
 }
 
 struct ContentView: View {
-    @AppStorage(Components.coffee) var coffee: Int = 21
-    @AppStorage(Components.ratio) var ratio: Int = 16
-    @AppStorage(Components.water) var water: Int = 336
+    @State var coffee: Int = UserDefaults.standard.integer(forKey: Components.coffee)
+    @State var ratio: Int = UserDefaults.standard.integer(forKey: Components.ratio)
+    @State var water: Int = UserDefaults.standard.integer(forKey: Components.water)
     
     var body: some View {
         
         let coffeeBinding: Binding<Int> = Binding(
-            get: { coffee },
+            get: { UserDefaults.standard.integer(forKey: Components.coffee) },
             set: { val in
                 coffee = val
+                UserDefaults.standard.set(coffee, forKey: Components.coffee)
+                
                 water = val * ratio
+                UserDefaults.standard.set(water, forKey: Components.water)
             }
         )
         
         let ratioBinding: Binding<Int> = Binding(
-            get: { ratio },
+            get: { UserDefaults.standard.integer(forKey: Components.ratio) },
             set: { val in
                 ratio = val
+                UserDefaults.standard.set(ratio, forKey: Components.ratio)
+                
                 water = val * coffee
+                UserDefaults.standard.set(water, forKey: Components.water)
             }
         )
         
         let waterBinding: Binding<Int> = Binding(
-            get: { water },
+            get: { UserDefaults.standard.integer(forKey: Components.water) },
             set: { val in
                 water = val
+                UserDefaults.standard.set(water, forKey: Components.water)
+                
                 coffee = val / ratio
+                UserDefaults.standard.set(coffee, forKey: Components.coffee)
             }
         )
         
