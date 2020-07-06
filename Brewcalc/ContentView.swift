@@ -9,6 +9,12 @@
 import SwiftUI
 import Foundation
 
+struct DefaultValues {
+    static let coffee = 21
+    static let ratio = 16
+    static let water = 336
+}
+
 enum Components {
     static let coffee = "coffee"
     static let ratio = "ratio"
@@ -82,6 +88,26 @@ struct ContentView: View {
                         .font(.system(size: 56, weight: .regular, design: .monospaced))
                 }
             }
+        }
+        .onAppear {
+            setDefaultValues()
+        }
+    }
+    
+    func setDefaultValues() {
+        if coffee == 0 {
+            coffee = DefaultValues.coffee
+            UserDefaults.standard.set(coffee, forKey: Components.coffee)
+        }
+        
+        if ratio == 0 {
+            ratio = DefaultValues.ratio
+            UserDefaults.standard.set(ratio, forKey: Components.ratio)
+        }
+        
+        if water == 0 {
+            water = DefaultValues.water
+            UserDefaults.standard.set(water, forKey: Components.water)
         }
     }
 }
