@@ -12,12 +12,15 @@ struct Nudger<Content: View>: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
     
+    @State var previousValue: Int = 0
     @State var currentValue: Int = 0
     
     @State var dragValue = CGSize.zero
     @State var isDragging = false
     
     let content: () -> Content
+    
+    let generator = UISelectionFeedbackGenerator()
     
     var body: some View {
         content()
@@ -26,11 +29,12 @@ struct Nudger<Content: View>: View {
                     .onChanged() { v in
                         isDragging = true
                         
-                        // Update internal value from state when gesture begins
+                        // Init internal value from state when gesture begins
                         if v.translation.width == 0 {
                             self.currentValue = self.value
                         }
                         
+                        // Update value every 20pts
                         var newValue = currentValue + Int(v.translation.width/20)
                         
                         // Ensure values stay within sensible ranges
@@ -42,8 +46,19 @@ struct Nudger<Content: View>: View {
                             newValue = range.lowerBound
                         }
                         
-                        // Update state
-                        self.value = newValue
+
+                        // Respond on new integer values only
+                        if previousValue != newValue {
+                            print(previousValue)
+                            
+                            // Update state
+                            self.value = newValue
+                            
+                            // Provide haptic feedback
+                            generator.selectionChanged()
+                        }
+                        
+                        self.previousValue = newValue
                         
                         withAnimation(.spring()) {
                             if v.translation.width > -12 && v.translation.width < 12 {
