@@ -29,34 +29,34 @@ struct ContentView: View {
     var body: some View {
         
         let coffeeBinding: Binding<Int> = Binding(
-            get: { UserDefaults.standard.integer(forKey: Components.coffee) },
-            set: { val in
-                coffee = val
+            get: { coffee },
+            set: {
+                coffee = $0
                 UserDefaults.standard.set(coffee, forKey: Components.coffee)
                 
-                water = val * ratio
+                water = $0 * ratio
                 UserDefaults.standard.set(water, forKey: Components.water)
             }
         )
         
         let ratioBinding: Binding<Int> = Binding(
-            get: { UserDefaults.standard.integer(forKey: Components.ratio) },
-            set: { val in
-                ratio = val
+            get: { ratio },
+            set: {
+                ratio = $0
                 UserDefaults.standard.set(ratio, forKey: Components.ratio)
                 
-                water = val * coffee
+                water = $0 * coffee
                 UserDefaults.standard.set(water, forKey: Components.water)
             }
         )
         
         let waterBinding: Binding<Int> = Binding(
-            get: { UserDefaults.standard.integer(forKey: Components.water) },
-            set: { val in
-                water = val
+            get: { water },
+            set: {
+                water = $0
                 UserDefaults.standard.set(water, forKey: Components.water)
                 
-                coffee = val / ratio
+                coffee = $0 / ratio
                 UserDefaults.standard.set(coffee, forKey: Components.coffee)
             }
         )
