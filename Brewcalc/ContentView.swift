@@ -27,8 +27,6 @@ struct ContentView: View {
             set: { val in
                 coffee = val
                 water = val * ratio
-                
-                print("coffee binding set")
             }
         )
         
@@ -37,8 +35,6 @@ struct ContentView: View {
             set: { val in
                 ratio = val
                 water = val * coffee
-                
-                print("ratio binding set")
             }
         )
         
@@ -47,8 +43,6 @@ struct ContentView: View {
             set: { val in
                 water = val
                 coffee = val / ratio
-                
-                print("water binding set")
             }
         )
         
