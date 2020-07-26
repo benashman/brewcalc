@@ -60,11 +60,8 @@ struct Nudger<Content: View>: View {
                         
                         self.previousValue = newValue
 
-                        
                         withAnimation(.spring()) {
-                            if v.translation.width > -12 && v.translation.width < 12 {
-                                dragValue = v.translation
-                            }
+                            dragValue = v.translation
                         }
                     }
                     .onEnded { _ in
@@ -77,7 +74,7 @@ struct Nudger<Content: View>: View {
                         }
                     }
             )
-            .offset(x: dragValue.width, y: 0)
+            .offset(x: dragValue.width / 10, y: 0)
             .foregroundColor(isDragging ? Color.yellow : Color.primary)
             .onAppear {
                 self.currentValue = self.value
